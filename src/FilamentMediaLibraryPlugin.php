@@ -21,22 +21,22 @@ class FilamentMediaLibraryPlugin implements Plugin
 
     public static function get(): static
     {
-        /** @var static  */
-         = filament(app(static::class)->getId());
+        /** @var static $plugin */
+        $plugin = filament(app(static::class)->getId());
 
-        return ;
+        return $plugin;
     }
 
-    public function register(Panel ): void
+    public function register(Panel $panel): void
     {
-        
+        $panel
             ->resources([
                 MediaResource::class,
                 MediaCategoryResource::class,
             ]);
     }
 
-    public function boot(Panel ): void
+    public function boot(Panel $panel): void
     {
         // Custom boot logic
     }

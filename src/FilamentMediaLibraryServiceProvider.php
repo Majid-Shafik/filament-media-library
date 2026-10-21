@@ -8,12 +8,12 @@ use MajidShafik\FilamentMediaLibrary\Commands\BackfillMediaHashesCommand;
 
 class FilamentMediaLibraryServiceProvider extends PackageServiceProvider
 {
-    public static string  = 'filament-media-library';
+    public static string $name = 'filament-media-library';
 
-    public function configurePackage(Package ): void
+    public function configurePackage(Package $package): void
     {
-        
-            ->name(static::)
+        $package
+            ->name(static::$name)
             ->hasConfigFile('filament-media-library')
             ->hasViews('filament-media-library')
             ->hasTranslations()
