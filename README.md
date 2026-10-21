@@ -1,4 +1,4 @@
-﻿# Filament Media Library
+# Filament Media Library
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/majid-shafik/filament-media-library.svg?style=flat-square)](https://packagist.org/packages/majid-shafik/filament-media-library)
 [![Total Downloads](https://img.shields.io/packagist/dt/majid-shafik/filament-media-library.svg?style=flat-square)](https://packagist.org/packages/majid-shafik/filament-media-library)
@@ -17,22 +17,22 @@ An advanced, secure, and modern centralized **Media Library Plugin for Filament 
 
 You can install the package via composer:
 
-`ash
+```bash
 composer require majid-shafik/filament-media-library
-`
+```
 
 Publish and run the migrations:
 
-`ash
+```bash
 php artisan vendor:publish --tag=filament-media-library-migrations
 php artisan migrate
-`
+```
 
 Optionally publish the config file:
 
-`ash
+```bash
 php artisan vendor:publish --tag=filament-media-library-config
-`
+```
 
 ---
 
@@ -40,18 +40,19 @@ php artisan vendor:publish --tag=filament-media-library-config
 
 Register the plugin in your AdminPanelProvider:
 
-`php
+```php
 use MajidShafik\FilamentMediaLibrary\FilamentMediaLibraryPlugin;
+use Filament\Panel;
 
-public function panel(Panel ): Panel
+public function panel(Panel $panel): Panel
 {
-    return 
+    return $panel
         // ...
         ->plugins([
             FilamentMediaLibraryPlugin::make(),
         ]);
 }
-`
+```
 
 ---
 
@@ -59,7 +60,7 @@ public function panel(Panel ): Panel
 
 Use MediaImagePicker directly inside any Filament Form, Infolist, or PageBuilder Block:
 
-`php
+```php
 use MajidShafik\FilamentMediaLibrary\Components\MediaImagePicker;
 
 MediaImagePicker::make(
@@ -69,7 +70,7 @@ MediaImagePicker::make(
     directory: 'uploads/contents',
     required: true,
 )
-`
+```
 
 ---
 
@@ -77,9 +78,9 @@ MediaImagePicker::make(
 
 To calculate SHA-256 fingerprints for legacy media:
 
-`ash
+```bash
 php artisan media:backfill-hashes --all
-`
+```
 
 ---
 
