@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل إطلاق ونشر حزمة Filament Media Library | Majid Shafik</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-50: #fff7ed;
+            --primary-100: #ffedd5;
+            --primary-200: #fed7aa;
+            --primary-300: #fdba74;
+            --primary-400: #fb923c;
+            --primary-500: #f97316;
+            --primary-600: #ea580c;
+            --primary-700: #c2410c;
+            --primary-800: #9a3412;
+            --primary-900: #7c2d12;
+            --bg-dark: #0a0c10;
+            --bg-card: rgba(20, 24, 33, 0.85);
+            --bg-card-hover: rgba(28, 35, 49, 0.95);
+            --border-glow: rgba(249, 115, 22, 0.35);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --code-bg: #07090e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.8;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 85% 10%, rgba(234, 88, 12, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 10% 50%, rgba(249, 115, 22, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(194, 65, 12, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Reading Progress Bar */
+        #read-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            width: 0%;
+            background: linear-gradient(90deg, #f97316, #fb923c, #ea580c);
+            z-index: 1000;
+            transition: width 0.1s ease-out;
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.9);
+        }
+
+        /* Header Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(18px);
+            background: rgba(10, 12, 16, 0.88);
+            border-bottom: 1px solid var(--border-glow);
+            z-index: 999;
+            padding: 1rem 2rem;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+        }
+
+        .logo-icon {
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(234, 88, 12, 0.45);
+            color: #fff;
+        }
+
+        .logo-text h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #ffffff, var(--primary-200));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.82rem;
+            color: var(--primary-400);
+            font-weight: 600;
+        }
+
+        .header-badges {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 0.4rem 0.95rem;
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .badge-orange {
+            background: rgba(249, 115, 22, 0.16);
+            border: 1px solid rgba(249, 115, 22, 0.45);
+            color: var(--primary-300);
+        }
+
+        .badge-green {
+            background: rgba(34, 197, 94, 0.16);
+            border: 1px solid rgba(34, 197, 94, 0.45);
+            color: #86efac;
+        }
+
+        /* Layout Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        /* Sidebar Index */
+        aside.sidebar {
+            position: sticky;
+            top: 6.2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 1.5rem;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            max-height: calc(100vh - 8rem);
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--primary-300);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .toc-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toc-item a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 0.95rem;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            border-right: 3px solid transparent;
+        }
+
+        .toc-item a:hover {
+            color: #fff;
+            background: rgba(249, 115, 22, 0.14);
+            border-right-color: var(--primary-500);
+            transform: translateX(-4px);
+        }
+
+        .toc-item.active a {
+            color: #fff;
+            background: linear-gradient(90deg, rgba(234, 88, 12, 0.25), transparent);
+            border-right-color: var(--primary-500);
+            font-weight: 700;
+        }
+
+        .toc-step-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--primary-300);
+            font-weight: bold;
+        }
+
+        .toc-item.active .toc-step-num {
+            background: var(--primary-600);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
+        }
+
+        /* Main Content */
+        main.content {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            padding: 2.75rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.45);
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: -60px;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.35) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(50px);
+        }
+
+        .hero-title {
+            font-size: 2.35rem;
+            font-weight: 900;
+            line-height: 1.35;
+            margin-bottom: 1.1rem;
+            background: linear-gradient(120deg, #ffffff 40%, var(--primary-300) 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.12rem;
+            color: var(--text-muted);
+            max-width: 880px;
+            margin-bottom: 2.2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 1.35rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            transition: all 0.25s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(249, 115, 22, 0.1);
+            border-color: rgba(249, 115, 22, 0.45);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            shrink-0: 0;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+            font-size: 1.2rem;
+        }
+
+        .feature-info h4 {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-info p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Step Section */
+        .step-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 22px;
+            padding: 2.5rem;
+            backdrop-filter: blur(14px);
+            position: relative;
+            transition: border-color 0.3s ease;
+        }
+
+        .step-section:hover {
+            border-color: rgba(249, 115, 22, 0.4);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.85rem;
+            padding-bottom: 1.35rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .step-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+            color: #fff;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 800;
+            box-shadow: 0 6px 22px rgba(234, 88, 12, 0.45);
+        }
+
+        .step-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .step-badge {
+            background: rgba(249, 115, 22, 0.14);
+            color: var(--primary-300);
+            border: 1px solid rgba(249, 115, 22, 0.35);
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .step-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 1.6rem;
+        }
+
+        /* Sub-steps */
+        .substep {
+            margin-bottom: 1.85rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 1.35rem 1.6rem;
+        }
+
+        .substep-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-200);
+            margin-bottom: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        /* Code Blocks */
+        .code-box {
+            position: relative;
+            background: var(--code-bg);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1.1rem 0;
+            box-shadow: 0 5px 22px rgba(0, 0, 0, 0.55);
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.55rem 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            font-size: 0.82rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+        }
+
+        .copy-btn {
+            background: rgba(249, 115, 22, 0.16);
+            border: 1px solid rgba(249, 115, 22, 0.4);
+            color: var(--primary-300);
+            padding: 0.35rem 0.85rem;
+            border-radius: 7px;
+            font-size: 0.78rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-600);
+            color: #fff;
+            transform: scale(1.04);
+            box-shadow: 0 2px 10px rgba(234, 88, 12, 0.5);
+        }
+
+        .copy-btn.copied {
+            background: #22c55e !important;
+            border-color: #22c55e !important;
+            color: #fff !important;
+        }
+
+        pre {
+            padding: 1.1rem 1.35rem;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.65;
+            color: #f1f5f9;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Link & Inline Copy Item */
+        .link-copy-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.35);
+            border-radius: 10px;
+            padding: 0.75rem 1.1rem;
+            margin: 0.85rem 0;
+            transition: all 0.2s ease;
+        }
+
+        .link-copy-box:hover {
+            background: rgba(249, 115, 22, 0.14);
+            border-color: var(--primary-500);
+        }
+
+        .link-text {
+            direction: ltr;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.92rem;
+            color: var(--primary-200);
+            word-break: break-all;
+            font-weight: 500;
+        }
+
+        .link-copy-btn {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+            border: none;
+            color: #fff;
+            padding: 0.45rem 1rem;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            shrink-0: 0;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
+        }
+
+        .link-copy-btn:hover {
+            background: var(--primary-500);
+            transform: scale(1.05);
+        }
+
+        .link-copy-btn.copied {
+            background: #22c55e !important;
+        }
+
+        .code-inline {
+            background: rgba(249, 115, 22, 0.16);
+            color: var(--primary-300);
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            direction: ltr;
+            display: inline-block;
+            cursor: pointer;
+            border: 1px dashed rgba(249, 115, 22, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .code-inline:hover {
+            background: var(--primary-600);
+            color: #fff;
+            border-color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* Tips & Callouts */
+        .callout {
+            border-right: 4px solid var(--primary-500);
+            background: linear-gradient(90deg, rgba(234, 88, 12, 0.14), transparent);
+            border-radius: 0 14px 14px 0;
+            padding: 1.1rem 1.35rem;
+            margin: 1.35rem 0;
+            font-size: 0.95rem;
+        }
+
+        .callout-title {
+            font-weight: 800;
+            color: var(--primary-300);
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .callout-green {
+            border-right-color: #22c55e;
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.14), transparent);
+        }
+
+        .callout-green .callout-title {
+            color: #86efac;
+        }
+
+        /* Toast Alert */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+            color: #fff;
+            padding: 0.85rem 1.6rem;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 12px 30px rgba(234, 88, 12, 0.55);
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 4.5rem;
+            border-top: 1px solid var(--border-subtle);
+            padding: 2.75rem 1rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+
+        footer strong {
+            color: var(--primary-400);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            aside.sidebar {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Scroll Progress -->
+    <div id="read-progress"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-box">
+                <div class="logo-icon">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>دليل نشر حزمة Filament Media Library</h1>
+                    <p>المؤلف: ماجد شفيق (Majid Shafik)</p>
+                </div>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-orange">Filament 5 & Laravel 13</span>
+                <span class="badge badge-green">Open Source (MIT)</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                فهرس مراحل النشر
+            </div>
+            <ul class="toc-list">
+                <li class="toc-item active">
+                    <a href="#overview">
+                        <span class="toc-step-num">★</span>
+                        نظرة عامة وهوية الحزمة
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#step-1">
+                        <span class="toc-step-num">1</span>
+                        المرحلة 1: الاختبار المحلي (Symlink)
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#step-2">
+                        <span class="toc-step-num">2</span>
+                        المرحلة 2: تجهيز Git والرفع لـ GitHub
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#step-3">
+                        <span class="toc-step-num">3</span>
+                        المرحلة 3: النشر على Packagist
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#step-4">
+                        <span class="toc-step-num">4</span>
+                        المرحلة 4: التقديم لدليل Filament الرسمي
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="#cheatsheet">
+                        <span class="toc-step-num">⚡</span>
+                        أوامر سريعة ونصائح ذهبية
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+
+            <!-- Hero Section -->
+            <section id="overview" class="hero-banner">
+                <h2 class="hero-title">إطلاق حزمة مكتبة الوسائط المركزية للعالم</h2>
+                <p class="hero-desc">
+                    هذا الدليل يرافقك خطوة بخطوة لتحويل مجهودك البرمجي إلى حزمة معتمدة على <strong>Packagist</strong> وموقع <strong>Filament Plugins</strong> باسمك، وتتيح لأي مطور في العالم تثبيتها بسطر أوامر واحد مع دعم كامل لنسخ الأكواد والروابط بنقرة واحدة.
+                </p>
+
+                <!-- Command Box -->
+                <div class="link-copy-box" style="margin-bottom: 2rem;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--primary-300); font-weight: bold; margin-bottom: 0.2rem;">أمر تثبيت الحزمة العالمي (Composer Require):</div>
+                        <div class="link-text" id="cmd-install">composer require majid-shafik/filament-media-library</div>
+                    </div>
+                    <button class="link-copy-btn" onclick="copyCustomText('composer require majid-shafik/filament-media-library', this)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        نسخ الأمر
+                    </button>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <div class="feature-info">
+                            <h4>كشف التكرار SHA-256</h4>
+                            <p>توليد بصمة بايتات فريدة لكل صورة لمنع تكرار التخزين وتوفير الجيجابايتات.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌳</div>
+                        <div class="feature-info">
+                            <h4>شجرة مجلدات هرمية</h4>
+                            <p>تنظيم التصنيفات بمستويات غير محدودة مع حماية كاملة من التكرار الحلقي.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-info">
+                            <h4>فحص وتطهير أمني</h4>
+                            <p>إعادة ترميز عبر GD لمنع الـ Decompression Bombs وحذف أكواد EXIF الخبيثة.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔗</div>
+                        <div class="feature-info">
+                            <h4>تتبع الاستخدام والحذف الآمن</h4>
+                            <p>حماية الصور من الكسر إذا كانت مستخدمة في المحتوى أو باني الصفحات.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 1 -->
+            <section id="step-1" class="step-section">
+                <div class="step-header">
+                    <div class="step-title-wrap">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h3 class="step-title">المرحلة الأولى: الاختبار والربط المحلي (Symlink)</h3>
+                            <p class="step-desc" style="margin:0;">التأكد من أن الحزمة تعمل بنسبة 100% داخل مشروعك دون أي خطأ قبل رفعها للإنترنت.</p>
+                        </div>
+                    </div>
+                    <span class="step-badge">بيئة التطوير المحلية</span>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">1.1 إضافة الحزمة في ملف composer.json الخاص بمشروعك (مثل sfd-new-site):</h4>
+                    <p style="color:var(--text-muted); font-size:0.92rem;">
+                        افتح ملف <span class="code-inline" onclick="copyInlineText(this)">composer.json</span> وأضف مستودع الـ Path المحلي لكي يقرأ Composer الملفات مباشرة من مجلد الحزمة:
+                    </p>
+                    <div class="code-box">
+                        <div class="code-header">
+                            <span>composer.json</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                نسخ الكود
+                            </button>
+                        </div>
+                        <pre><code>"repositories": [
+    {
+        "type": "path",
+        "url": "D:/taturial/Laravel/Filament/Filament Packages/packages/majid-shafik/filament-media-library",
+        "options": {
+            "symlink": true
+        }
+    }
+]</code></pre>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">1.2 تثبيت الحزمة عبر Terminal المشروع:</h4>
+                    <div class="code-box">
+                        <div class="code-header">
+                            <span>Terminal (داخل مجلد مشروعك)</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                نسخ الأمر
+                            </button>
+                        </div>
+                        <pre><code>composer require majid-shafik/filament-media-library:@dev</code></pre>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">1.3 تفعيل الـ Plugin في مزود لوحة التحكم (AdminPanelProvider.php):</h4>
+                    <div class="code-box">
+                        <div class="code-header">
+                            <span>app/Providers/Filament/AdminPanelProvider.php</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                نسخ الكود
+                            </button>
+                        </div>
+                        <pre><code>use MajidShafik\FilamentMediaLibrary\FilamentMediaLibraryPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ... الإعدادات الأخرى
+        ->plugins([
+            FilamentMediaLibraryPlugin::make(),
+        ]);
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">1.4 تشغيل الميجريشنز ومسح الكاش:</h4>
+                    <div class="code-box">
+                        <div class="code-header">
+                            <span>Terminal</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                نسخ الأوامر
+                            </button>
+                        </div>
+                        <pre><code>php artisan migrate
+php artisan optimize:clear</code></pre>
+                    </div>
+                </div>
+
+                <div class="callout callout-green">
+                    <div class="callout-title">✓ علامة النجاح:</div>
+                    افتح المتصفح وادخل للوحة الإدارة؛ ستجد مجموعة "مكتبة الوسائط" ظهرت في القائمة الجانبية بشاشات استعراض الوسائط وشجرة التصنيفات بسلاسة تامة.
+                </div>
+            </section>
+
+            <!-- Step 2 -->
+            <section id="step-2" class="step-section">
+                <div class="step-header">
+                    <div class="step-title-wrap">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h3 class="step-title">المرحلة الثانية: تجهيز Git والرفع إلى GitHub</h3>
+                            <p class="step-desc" style="margin:0;">رفع الحزمة إلى حسابك كمستودع عام مفتوح المصدر (Public Repository).</p>
+                        </div>
+                    </div>
+                    <span class="step-badge">مستودع الكود</span>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">2.1 إنشاء مستودع جديد على GitHub:</h4>
+                    <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom: 0.6rem;">
+                        1. افتح صفحة إنشاء المستودع الجديد في GitHub:
+                    </p>
+                    <div class="link-copy-box">
+                        <span class="link-text">https://github.com/new</span>
+                        <button class="link-copy-btn" onclick="copyCustomText('https://github.com/new', this)">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            نسخ الرابط
+                        </button>
+                    </div>
+                    <p style="color:var(--text-muted); font-size:0.92rem; line-height: 1.9;">
+                        2. سمّ المستودع: <span class="code-inline" onclick="copyInlineText(this)">filament-media-library</span><br>
+                        3. اختر نوعه: <strong>Public</strong> (عام).<br>
+                        4. <u>لا</u> تضع علامة صح على إضافة README أو LICENSE لأننا قمنا بتجهيزهما مسبقاً داخل الحزمة.
+                    </p>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">2.2 تهيئة Git ورفع الكود من جهازك:</h4>
+                    <p style="color:var(--text-muted); font-size:0.92rem;">
+                        افتح Terminal داخل مجلد الحزمة الفعلي وشغّل الأوامر التالية:
+                    </p>
+                    <div class="code-box">
+                        <div class="code-header">
+                            <span>PowerShell / CMD</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                نسخ مجموعة الأوامر
+                            </button>
+                        </div>
+                        <pre><code>cd "D:\taturial\Laravel\Filament\Filament Packages\packages\majid-shafik\filament-media-library"
+
+git init
+git add .
+git commit -m "feat: initial release of filament-media-library v1.0.0"
+
+git branch -M main
+git remote add origin https://github.com/Majid-Shafik/filament-media-library.git
+git push -u origin main</code></pre>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">2.3 إصدار أول وسم رسمي (Release Tag):</h4>
+                    <p style="color:var(--text-muted); font-size:0.92rem;">
+                        الوسم (Tag) هو الذي يعتمده Composer لمعرفة رقم الإصدار المستقر:
+                    </p>
+                    <div class="code-box">
+                        <div class="code-header">
+                            <span>Terminal</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                نسخ
+                            </button>
+                        </div>
+                        <pre><code>git tag v1.0.0
+git push origin v1.0.0</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3 -->
+            <section id="step-3" class="step-section">
+                <div class="step-header">
+                    <div class="step-title-wrap">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h3 class="step-title">المرحلة الثالثة: النشر على Packagist</h3>
+                            <p class="step-desc" style="margin:0;">جعل الحزمة رسمية وقابلة للتثبيت لأي مطور في العالم عبر composer require.</p>
+                        </div>
+                    </div>
+                    <span class="step-badge">مستودع الحزم العالمي</span>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">3.1 رابط الدخول إلى Packagist:</h4>
+                    <div class="link-copy-box">
+                        <span class="link-text">https://packagist.org</span>
+                        <button class="link-copy-btn" onclick="copyCustomText('https://packagist.org', this)">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            نسخ الرابط
+                        </button>
+                    </div>
+                    <ol style="color:var(--text-muted); font-size:0.92rem; padding-right:1.5rem; line-height:2.2; margin-top:0.75rem;">
+                        <li>سجل الدخول باستخدام حسابك في GitHub (Log in with GitHub).</li>
+                        <li>اضغط على زر <strong>Submit</strong> في القائمة العلوية.</li>
+                        <li>الصق رابط مستودع الـ GitHub التالي:</li>
+                    </ol>
+                    <div class="link-copy-box">
+                        <span class="link-text">https://github.com/Majid-Shafik/filament-media-library</span>
+                        <button class="link-copy-btn" onclick="copyCustomText('https://github.com/Majid-Shafik/filament-media-library', this)">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            نسخ الرابط
+                        </button>
+                    </div>
+                    <p style="color:var(--text-muted); font-size:0.92rem; margin-top: 0.5rem;">
+                        اضغط على <strong>Check</strong> ثم اضغط على <strong>Submit</strong>.
+                    </p>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">3.2 تفعيل التحديث التلقائي (GitHub Webhook):</h4>
+                    <p style="color:var(--text-muted); font-size:0.92rem;">
+                        في صفحة حزمتك على Packagist ستظهر رسالة تتيح لك تفعيل الـ Webhook بنقرة واحدة ليرسل التحديثات لـ Packagist تلقائياً عند أي Push على GitHub.
+                    </p>
+                </div>
+
+                <div class="callout">
+                    <div class="callout-title">🎉 مبارك! حزمتك أصبحت عالمية:</div>
+                    الآن، يستطيع أي مبرمج حول العالم فتح أي مشروع لارافيل وتشغيل هذا الأمر:
+                    <div class="link-copy-box" style="margin-top: 0.75rem;">
+                        <span class="link-text">composer require majid-shafik/filament-media-library</span>
+                        <button class="link-copy-btn" onclick="copyCustomText('composer require majid-shafik/filament-media-library', this)">
+                            نسخ الأمر
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 4 -->
+            <section id="step-4" class="step-section">
+                <div class="step-header">
+                    <div class="step-title-wrap">
+                        <div class="step-number">4</div>
+                        <div>
+                            <h3 class="step-title">المرحلة الرابعة: التقديم لدليل Filament الرسمي</h3>
+                            <p class="step-desc" style="margin:0;">إدراج حزمتك رسمياً في قائمة filamentphp.com/plugins للوصول لآلاف المطورين.</p>
+                        </div>
+                    </div>
+                    <span class="step-badge">دليل Filament الرسمي</span>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">4.1 رابط تقديم البلجن:</h4>
+                    <div class="link-copy-box">
+                        <span class="link-text">https://filamentphp.com/community/submit-plugin</span>
+                        <button class="link-copy-btn" onclick="copyCustomText('https://filamentphp.com/community/submit-plugin', this)">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            نسخ الرابط
+                        </button>
+                    </div>
+                    <ol style="color:var(--text-muted); font-size:0.92rem; padding-right:1.5rem; line-height:2.3; margin-top:0.75rem;">
+                        <li>سجل دخولك بحساب GitHub.</li>
+                        <li>املأ بيانات الحزمة (يمكنك نسخ القيم المباشرة بنقرة واحدة):</li>
+                    </ol>
+                    <div style="display:flex; flex-direction:column; gap:0.6rem; margin-top:0.8rem;">
+                        <div class="link-copy-box">
+                            <div><strong style="color:#fff;">Name:</strong> <span class="link-text">Filament Media Library</span></div>
+                            <button class="link-copy-btn" onclick="copyCustomText('Filament Media Library', this)">نسخ الاسم</button>
+                        </div>
+                        <div class="link-copy-box">
+                            <div><strong style="color:#fff;">Package Name:</strong> <span class="link-text">majid-shafik/filament-media-library</span></div>
+                            <button class="link-copy-btn" onclick="copyCustomText('majid-shafik/filament-media-library', this)">نسخ المعرف</button>
+                        </div>
+                        <div class="link-copy-box">
+                            <div><strong style="color:#fff;">Repository URL:</strong> <span class="link-text">https://github.com/Majid-Shafik/filament-media-library</span></div>
+                            <button class="link-copy-btn" onclick="copyCustomText('https://github.com/Majid-Shafik/filament-media-library', this)">نسخ الرابط</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">4.2 نصائح مهمة للقبول السريع:</h4>
+                    <ul style="color:var(--text-muted); font-size:0.92rem; padding-right:1.5rem; line-height:2;">
+                        <li><strong>الصور (Screenshots):</strong> ارفع صورتين إلى 3 صور أنيقة لواجهة استعراض الوسائط، شجرة التصنيفات، وبطاقة التنبيه بالتطابق.</li>
+                        <li><strong>التوثيق:</strong> ملف الـ README الجاهز داخل الحزمة يفي بجميع المتطلبات الرسمية.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Cheatsheet & Tips -->
+            <section id="cheatsheet" class="step-section">
+                <div class="step-header">
+                    <div class="step-title-wrap">
+                        <div class="step-number" style="background:linear-gradient(135deg, #f59e0b, #d97706);">⚡</div>
+                        <div>
+                            <h3 class="step-title">أوامر سريعة ونصائح صيانة الحزمة</h3>
+                            <p class="step-desc" style="margin:0;">أوامر ستحتاجها لاحقاً عند إصدار تحديثات جديدة.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">كيف تصدر تحديثاً جديداً للحزمة مستقبلاً؟ (مثلاً v1.0.1):</h4>
+                    <div class="code-box">
+                        <div class="code-header">
+                            <span>Terminal</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                نسخ مجموعة الأوامر
+                            </button>
+                        </div>
+                        <pre><code># 1. بعد تعديل الكود:
+git add .
+git commit -m "fix: improve image upload validation"
+git push origin main
+
+# 2. إنشاء تاج إصدار جديد:
+git tag v1.0.1
+git push origin v1.0.1</code></pre>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4 class="substep-title">أمر حساب بصمات SHA-256 للصور القديمة في أي مشروع يستخدم الحزمة:</h4>
+                    <div class="link-copy-box">
+                        <span class="link-text">php artisan media:backfill-hashes --all</span>
+                        <button class="link-copy-btn" onclick="copyCustomText('php artisan media:backfill-hashes --all', this)">
+                            نسخ الأمر
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="toast-msg">تم النسخ بنجاح إلى الحافظة!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>تم إعداد هذا الدليل التفاعلي بواسطة <strong>Antigravity AI</strong> لصالح المطور <strong>ماجد شفيق</strong> &copy; 2026</p>
+        <p style="font-size:0.82rem; margin-top:0.45rem; color:#64748b;">حزمة Filament Media Library مفتوحة المصدر تحت ترخيص MIT</p>
+    </footer>
+
+    <script>
+        // Reading Progress Indicator
+        window.addEventListener('scroll', () => {
+            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (window.pageYOffset / totalHeight) * 100;
+            document.getElementById('read-progress').style.width = progress + '%';
+
+            // Active Sidebar Item tracking
+            const sections = document.querySelectorAll('section');
+            const navItems = document.querySelectorAll('.toc-item');
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 120) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.querySelector('a').getAttribute('href') === '#' + current) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Copy block code
+        function copyCode(btn) {
+            const pre = btn.closest('.code-box').querySelector('pre code');
+            const text = pre.innerText;
+            executeCopy(text, btn, 'تم نسخ الكود!');
+        }
+
+        // Copy custom text / link
+        function copyCustomText(text, btn) {
+            executeCopy(text, btn, 'تم نسخ الرابط / الأمر!');
+        }
+
+        // Copy inline code on click
+        function copyInlineText(el) {
+            const text = el.innerText;
+            executeCopy(text, null, 'تم نسخ: ' + text);
+        }
+
+        function executeCopy(text, btn, message) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show Toast
+                const toast = document.getElementById('toast');
+                document.getElementById('toast-msg').innerText = message;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2200);
+
+                // Button visual animation
+                if (btn) {
+                    const originalText = btn.innerHTML;
+                    btn.classList.add('copied');
+                    btn.innerHTML = '✓ تم النسخ!';
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = originalText;
+                    }, 2000);
+                }
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
