@@ -1,6 +1,6 @@
 <?php
 
-namespace MajidShafik\FilamentMediaLibrary\Resources;
+namespace MajidShafik\FilamentMediaLibrary\Resources\Media;
 
 use MajidShafik\FilamentMediaLibrary\Resources\Media\Pages;
 use MajidShafik\FilamentMediaLibrary\Resources\Media\Schemas\MediaForm;

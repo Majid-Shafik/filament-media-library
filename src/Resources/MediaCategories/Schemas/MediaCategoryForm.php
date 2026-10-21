@@ -1,6 +1,6 @@
 <?php
 
-namespace MajidShafik\FilamentMediaLibrary\Resources\Schemas;
+namespace MajidShafik\FilamentMediaLibrary\Resources\MediaCategories\Schemas;
 
 use MajidShafik\FilamentMediaLibrary\Models\MediaCategory;
 use Filament\Forms\Components\Select;

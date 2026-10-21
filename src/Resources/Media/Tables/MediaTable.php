@@ -1,6 +1,6 @@
 <?php
 
-namespace MajidShafik\FilamentMediaLibrary\Resources\Tables;
+namespace MajidShafik\FilamentMediaLibrary\Resources\Media\Tables;
 
 use MajidShafik\FilamentMediaLibrary\Models\Media;
 use MajidShafik\FilamentMediaLibrary\Services\MediaLifecycleService;

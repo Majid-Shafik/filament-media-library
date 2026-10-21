@@ -1,6 +1,6 @@
 <?php
 
-namespace MajidShafik\FilamentMediaLibrary\Resources\Pages;
+namespace MajidShafik\FilamentMediaLibrary\Resources\Media\Pages;
 
 use MajidShafik\FilamentMediaLibrary\Resources\Media\MediaResource;
 use MajidShafik\FilamentMediaLibrary\Models\Media;

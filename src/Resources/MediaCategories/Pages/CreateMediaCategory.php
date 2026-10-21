@@ -1,6 +1,6 @@
 <?php
 
-namespace MajidShafik\FilamentMediaLibrary\Resources\Pages;
+namespace MajidShafik\FilamentMediaLibrary\Resources\MediaCategories\Pages;
 
 use MajidShafik\FilamentMediaLibrary\Exceptions\CyclicCategoryException;
 use MajidShafik\FilamentMediaLibrary\Resources\MediaCategories\MediaCategoryResource;

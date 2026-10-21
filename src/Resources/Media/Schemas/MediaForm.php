@@ -1,6 +1,6 @@
 <?php
 
-namespace MajidShafik\FilamentMediaLibrary\Resources\Schemas;
+namespace MajidShafik\FilamentMediaLibrary\Resources\Media\Schemas;
 
 use MajidShafik\FilamentMediaLibrary\Models\Media;
 use MajidShafik\FilamentMediaLibrary\Rules\ValidImageFileRule;

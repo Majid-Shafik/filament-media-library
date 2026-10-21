@@ -4,8 +4,8 @@ namespace MajidShafik\FilamentMediaLibrary;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use MajidShafik\FilamentMediaLibrary\Resources\MediaResource;
-use MajidShafik\FilamentMediaLibrary\Resources\MediaCategoryResource;
+use MajidShafik\FilamentMediaLibrary\Resources\Media\MediaResource;
+use MajidShafik\FilamentMediaLibrary\Resources\MediaCategories\MediaCategoryResource;
 
 class FilamentMediaLibraryPlugin implements Plugin
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace MajidShafik\FilamentMediaLibrary\Resources\Pages;
+namespace MajidShafik\FilamentMediaLibrary\Resources\Media\Pages;
 
 use MajidShafik\FilamentMediaLibrary\Exceptions\MediaDuplicateDetectedException;
 use MajidShafik\FilamentMediaLibrary\Exceptions\MediaSecurityException;
