@@ -1,5 +1,9 @@
 # Filament Media Library
 
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Majid-Shafik/filament-media-library/main/art/banner.jpg" alt="Filament Media Library Banner" width="100%">
+</p>
+
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/majid-shafik/filament-media-library.svg?style=flat-square)](https://packagist.org/packages/majid-shafik/filament-media-library)
 [![Total Downloads](https://img.shields.io/packagist/dt/majid-shafik/filament-media-library.svg?style=flat-square)](https://packagist.org/packages/majid-shafik/filament-media-library)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
@@ -10,6 +14,24 @@ An advanced, secure, and modern centralized **Media Library Plugin for Filament 
 - 🛡️ **Deep Security Sanitization**: Magic byte signatures, GD re-encoding to strip malicious EXIF/payloads, and decompression bomb protection.
 - 🔗 **Smart Usages Tracking**: Prevent breaking links by tracking where media is used across content, sections, and page builder blocks.
 - ⚡ **Native RTL & Arabic Support**: Built from the ground up for modern enterprise workflows with full RTL ergonomics.
+
+---
+
+## 📸 Screenshots & Showcase
+
+### 1. Centralized Media Library & Upload Management (مكتبة الوسائط ورفع الملفات)
+Full interactive asset browser with live grid previews, folder filtering, instant secure upload, favorite toggle, and comprehensive usage tracking:
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Majid-Shafik/filament-media-library/main/art/media-library-manager.png" alt="Media Library Management" width="100%">
+</p>
+
+### 2. Hierarchical Categories Tree (إدارة شجرة التصنيفات الهرمية)
+Organize and structure media assets into flexible multi-level categories with cyclic recursion protection and quick action controls:
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Majid-Shafik/filament-media-library/main/art/categories-management.png" alt="Categories Management" width="100%">
+</p>
 
 ---
 
