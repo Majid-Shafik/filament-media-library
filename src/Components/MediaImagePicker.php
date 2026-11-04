@@ -259,6 +259,15 @@ class MediaImagePicker
                         ->label('ملف الصورة')
                         ->image()
                         ->acceptedFileTypes($centralAcceptedTypes)
+                        ->imageEditor()
+                        ->imageEditorEmptyFillColor('#000000')
+                        ->imageEditorAspectRatios([
+                            null,
+                            '16:9',
+                            '4:3',
+                            '1:1',
+                            '2:3',
+                        ])
                         ->maxSize(fn () => static::getMaxImageSizeMB() * 1024)
                         ->required()
                         ->preserveFilenames()
@@ -403,6 +412,15 @@ class MediaImagePicker
                         ->label('ملف الصورة')
                         ->image()
                         ->disk('public')
+                        ->imageEditor()
+                        ->imageEditorEmptyFillColor('#000000')
+                        ->imageEditorAspectRatios([
+                            null,
+                            '16:9',
+                            '4:3',
+                            '1:1',
+                            '2:3',
+                        ])
                         ->directory(fn ($record) => $directory ?: ($record ? "uploads/contents/{$record->id}" : "uploads/contents/temp"))
                         ->acceptedFileTypes($acceptedFileTypes)
                         ->maxSize(fn () => static::getMaxImageSizeMB() * 1024)

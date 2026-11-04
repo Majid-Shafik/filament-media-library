@@ -347,13 +347,22 @@ class ListMedia extends ListRecords
                         ->reorderable(false)
                         ->panelLayout('grid')
                         ->image()
+                        ->imageEditor()
+                        ->imageEditorEmptyFillColor('#000000')
+                        ->imageEditorAspectRatios([
+                            null,
+                            '16:9',
+                            '4:3',
+                            '1:1',
+                            '2:3',
+                        ])
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                         ->maxSize(10240)
                         ->required()
                         ->preserveFilenames()
                         ->storeFileNamesIn('attachment_file_names')
                         ->rules([new ValidImageFileRule()])
-                        ->helperText('الأنواع المدعومة: JPG, PNG, WebP (بحد أقصى 10MB لكل صورة). يمكنك تحديد أو سحب عدة صور معاً دفعة واحدة.'),
+                        ->helperText('الأنواع المدعومة: JPG, PNG, WebP (بحد أقصى 10MB لكل صورة). يمكنك قص وتعديل الصور بالنقر على أيقونة التحرير قبل الرفع.'),
 
                     Select::make('category_id')
                         ->label('المجلد / التصنيف')

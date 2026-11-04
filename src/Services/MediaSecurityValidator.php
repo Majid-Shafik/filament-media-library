@@ -97,9 +97,14 @@ class MediaSecurityValidator
         $maxWidth = $this->getMaxImageWidth();
         $maxHeight = $this->getMaxImageHeight();
 
-        if ($width > $maxWidth || $height > $maxHeight) {
+        $longEdge = max($width, $height);
+        $shortEdge = min($width, $height);
+        $maxAllowedLong = max($maxWidth, $maxHeight);
+        $maxAllowedShort = min($maxWidth, $maxHeight);
+
+        if ($longEdge > $maxAllowedLong || $shortEdge > $maxAllowedShort) {
             throw new MediaSecurityException(
-                "أبعاد الصورة ({$width}x{$height}) تتجاوز الأبعاد القصوى المسموح بها ({$maxWidth}x{$maxHeight} بكسل)."
+                "أبعاد الصورة ({$width}x{$height}) تتجاوز الأبعاد القصوى المسموح بها ({$maxAllowedLong}x{$maxAllowedShort} بكسل)."
             );
         }
 
