@@ -637,7 +637,7 @@
                                         <button 
                                             type="button" 
                                             class="fct-action-btn" 
-                                            wire:click="mountAction('createSubcategory', { parent_id: {{ $node['id'] }} })"
+                                            wire:click="createSubcategoryFor({{ $node['id'] }})"
                                             title="إضافة تصنيف فرعي جديد تحت {{ $node['name'] }}"
                                         >
                                             <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -662,7 +662,7 @@
                                         <button 
                                             type="button" 
                                             class="fct-action-btn" 
-                                            wire:click="mountAction('editCategoryAction', { id: {{ $node['id'] }} })"
+                                            wire:click="editCategory({{ $node['id'] }})"
                                             title="تعديل بيانات التصنيف"
                                         >
                                             <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -676,7 +676,7 @@
                                         <button 
                                             type="button" 
                                             class="fct-action-btn delete" 
-                                            wire:click="mountAction('deleteCategoryAction', { id: {{ $node['id'] }} })"
+                                            wire:click="deleteCategory({{ $node['id'] }})"
                                             title="حذف التصنيف"
                                         >
                                             <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">

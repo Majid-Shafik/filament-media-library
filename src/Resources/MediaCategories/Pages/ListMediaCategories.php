@@ -7,6 +7,7 @@ use MajidShafik\FilamentMediaLibrary\Resources\MediaCategories\MediaCategoryReso
 use MajidShafik\FilamentMediaLibrary\Models\MediaCategory;
 use MajidShafik\FilamentMediaLibrary\Services\MediaCategoryService;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -25,6 +26,25 @@ class ListMediaCategories extends ListRecords
     public string $viewMode = 'tree'; // 'tree' or 'table'
     public string $search = '';
     public array $expanded = [];
+    public ?int $selectedCategoryId = null;
+
+    public function createSubcategoryFor(int $parentId): void
+    {
+        $this->selectedCategoryId = $parentId;
+        $this->mountAction('createSubcategory', ['parent_id' => $parentId]);
+    }
+
+    public function editCategory(int $id): void
+    {
+        $this->selectedCategoryId = $id;
+        $this->mountAction('editCategoryAction', ['id' => $id]);
+    }
+
+    public function deleteCategory(int $id): void
+    {
+        $this->selectedCategoryId = $id;
+        $this->mountAction('deleteCategoryAction', ['id' => $id]);
+    }
 
     public function mount(): void
     {
@@ -91,6 +111,7 @@ class ListMediaCategories extends ListRecords
                 ->modalHeading('إنشاء تصنيف رئيسي جديد')
                 ->modalSubmitActionLabel('حفظ التصنيف')
                 ->form([
+                    Hidden::make('id'),
                     TextInput::make('name')
                         ->label('اسم التصنيف')
                         ->required()
@@ -151,7 +172,7 @@ class ListMediaCategories extends ListRecords
                 ->modalHeading('إضافة تصنيف فرعي')
                 ->modalSubmitActionLabel('حفظ التصنيف الفرعي')
                 ->fillForm(fn (array $arguments) => [
-                    'parent_id' => $arguments['parent_id'] ?? null,
+                    'parent_id' => $arguments['parent_id'] ?? $this->selectedCategoryId ?? null,
                 ])
                 ->form([
                     Select::make('parent_id')
@@ -222,7 +243,14 @@ class ListMediaCategories extends ListRecords
                 ->modalHeading('تعديل بيانات التصنيف')
                 ->modalSubmitActionLabel('حفظ التعديلات')
                 ->fillForm(function (array $arguments) {
-                    $cat = MediaCategory::findOrFail($arguments['id']);
+                    $catId = $arguments['id'] ?? $this->selectedCategoryId ?? null;
+                    if (!$catId) {
+                        return [];
+                    }
+                    $cat = MediaCategory::find($catId);
+                    if (!$cat) {
+                        return [];
+                    }
                     return [
                         'id'        => $cat->id,
                         'name'      => $cat->name,
@@ -231,6 +259,7 @@ class ListMediaCategories extends ListRecords
                     ];
                 })
                 ->form([
+                    Hidden::make('id'),
                     TextInput::make('name')
                         ->label('اسم التصنيف')
                         ->required()
@@ -263,7 +292,12 @@ class ListMediaCategories extends ListRecords
                         ->placeholder('بدون تصنيف أب (تصنيف رئيسي)'),
                 ])
                 ->action(function (array $data, array $arguments, Action $action) {
-                    $cat = MediaCategory::findOrFail($arguments['id']);
+                    $catId = $arguments['id'] ?? $data['id'] ?? $this->selectedCategoryId ?? null;
+                    if (!$catId) {
+                        Notification::make()->title('لم يتم تحديد التصنيف')->danger()->send();
+                        return;
+                    }
+                    $cat = MediaCategory::findOrFail($catId);
                     $newParentId = !empty($data['parent_id']) ? (int) $data['parent_id'] : null;
 
                     if (empty($data['slug'])) {
@@ -319,8 +353,13 @@ class ListMediaCategories extends ListRecords
                 ->modalHeading('تأكيد حذف التصنيف')
                 ->modalDescription('سيتم التأكد من خلو التصنيف من أي فروع أو وسائط مرتبطة وفق القواعد الهندسية قبل الحذف.')
                 ->action(function (array $arguments, Action $action) {
+                    $catId = $arguments['id'] ?? $this->selectedCategoryId ?? null;
+                    if (!$catId) {
+                        Notification::make()->title('لم يتم تحديد التصنيف المراد حذفه')->danger()->send();
+                        return;
+                    }
                     try {
-                        $cat = MediaCategory::findOrFail($arguments['id']);
+                        $cat = MediaCategory::findOrFail($catId);
                         app(MediaCategoryService::class)->deleteCategory($cat);
                         Notification::make()
                             ->title('تم حذف التصنيف بنجاح')
