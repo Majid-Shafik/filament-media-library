@@ -928,13 +928,70 @@
                             type="button" 
                             class="fml-btn-secondary" 
                             style="{{ !$canUpdateMedia ? 'grid-column: span 2;' : '' }}"
-                            x-data 
-                            @click="navigator.clipboard.writeText('{{ $activeData['url'] }}'); $tooltip('تم نسخ الرابط إلى الحافظة');"
+                            x-data="{
+                                copied: false,
+                                copyLink() {
+                                    let url = '{{ addslashes($activeData['url']) }}';
+                                    try {
+                                        url = new URL(url, window.location.origin).href;
+                                    } catch (e) {}
+
+                                    const onCopied = () => {
+                                        this.copied = true;
+                                        if (window.FilamentNotification) {
+                                            new FilamentNotification()
+                                                .title('تم نسخ الرابط إلى الحافظة بنجاح')
+                                                .success()
+                                                .send();
+                                        }
+                                        setTimeout(() => { this.copied = false; }, 2000);
+                                    };
+
+                                    if (navigator.clipboard && window.isSecureContext) {
+                                        navigator.clipboard.writeText(url)
+                                            .then(onCopied)
+                                            .catch(() => this.fallbackCopy(url, onCopied));
+                                    } else {
+                                        this.fallbackCopy(url, onCopied);
+                                    }
+                                },
+                                fallbackCopy(text, onSuccess) {
+                                    try {
+                                        const el = document.createElement('textarea');
+                                        el.value = text;
+                                        el.setAttribute('readonly', '');
+                                        el.style.position = 'fixed';
+                                        el.style.opacity = '0';
+                                        el.style.pointerEvents = 'none';
+                                        document.body.appendChild(el);
+                                        el.select();
+                                        el.setSelectionRange(0, 99999);
+                                        const successful = document.execCommand('copy');
+                                        document.body.removeChild(el);
+                                        if (successful) {
+                                            onSuccess();
+                                        } else {
+                                            window.prompt('انسخ الرابط يدوياً:', text);
+                                        }
+                                    } catch (err) {
+                                        window.prompt('انسخ الرابط يدوياً:', text);
+                                    }
+                                }
+                            }" 
+                            @click="copyLink()"
                         >
-                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
-                            </svg>
-                            <span>نسخ الرابط</span>
+                            <span x-show="!copied" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                </svg>
+                                <span>نسخ الرابط</span>
+                            </span>
+                            <span x-show="copied" x-cloak style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: #059669; font-weight: 600;">
+                                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>تم النسخ!</span>
+                            </span>
                         </button>
 
                         @if($canUpdateMedia)
