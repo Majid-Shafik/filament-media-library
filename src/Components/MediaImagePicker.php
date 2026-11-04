@@ -126,7 +126,7 @@ class MediaImagePicker
     /**
      * Resolve uploaded file instance from temporary attachment path.
      */
-    public static function resolveUploadedFile(?string $attachment): ?UploadedFile
+    public static function resolveUploadedFile(?string $attachment, ?string $originalName = null): ?UploadedFile
     {
         if (!$attachment) {
             return null;
@@ -148,9 +148,11 @@ class MediaImagePicker
             return null;
         }
 
+        $name = $originalName ?: basename($attachment);
+
         return new UploadedFile(
             $resolvedPath,
-            basename($attachment),
+            $name,
             @mime_content_type($resolvedPath) ?: 'image/jpeg',
             null,
             true
@@ -259,6 +261,8 @@ class MediaImagePicker
                         ->acceptedFileTypes($centralAcceptedTypes)
                         ->maxSize(fn () => static::getMaxImageSizeMB() * 1024)
                         ->required()
+                        ->preserveFilenames()
+                        ->storeFileNamesIn('attachment_file_name')
                         ->live()
                         ->rules([new ValidImageFileRule()])
                         ->helperText(function () use ($centralAcceptedTypes) {
@@ -308,7 +312,8 @@ class MediaImagePicker
                         return;
                     }
 
-                    $uploadedFile = static::resolveUploadedFile($attachment);
+                    $clientOriginalName = $data['attachment_file_name'] ?? basename($attachment);
+                    $uploadedFile = static::resolveUploadedFile($attachment, $clientOriginalName);
                     if (!$uploadedFile) {
                         Notification::make()->title('تعذر العثور على الملف المرفوع مؤقتاً')->danger()->send();
                         return;

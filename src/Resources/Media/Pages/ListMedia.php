@@ -350,6 +350,8 @@ class ListMedia extends ListRecords
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                         ->maxSize(10240)
                         ->required()
+                        ->preserveFilenames()
+                        ->storeFileNamesIn('attachment_file_names')
                         ->rules([new ValidImageFileRule()])
                         ->helperText('الأنواع المدعومة: JPG, PNG, WebP (بحد أقصى 10MB لكل صورة). يمكنك تحديد أو سحب عدة صور معاً دفعة واحدة.'),
 
@@ -402,6 +404,8 @@ class ListMedia extends ListRecords
                     $total = count($attachments);
                     $force = !empty($data['force_duplicate']);
 
+                    $originalNamesMap = $data['attachment_file_names'] ?? [];
+
                     foreach ($attachments as $index => $attachment) {
                         $resolvedPath = null;
                         foreach (['public', 'local'] as $diskName) {
@@ -420,12 +424,17 @@ class ListMedia extends ListRecords
                             continue;
                         }
 
-                        $originalName = basename($attachment);
+                        $clientOriginalName = $originalNamesMap[$attachment]
+                            ?? $originalNamesMap[basename($attachment)]
+                            ?? basename($attachment);
+
+                        $originalName = trim($clientOriginalName);
                         $mimeType = @mime_content_type($resolvedPath) ?: 'image/jpeg';
                         $uploadedFile = new UploadedFile($resolvedPath, $originalName, $mimeType, null, true);
 
-                        $itemTitle = !empty($data['title'])
-                            ? ($total > 1 ? "{$data['title']} (" . ($index + 1) . ")" : $data['title'])
+                        $rawTitle = !empty($data['title']) ? trim($data['title']) : null;
+                        $itemTitle = $rawTitle
+                            ? ($total > 1 ? "{$rawTitle} (" . ($index + 1) . ")" : $rawTitle)
                             : pathinfo($originalName, PATHINFO_FILENAME);
 
                         try {
