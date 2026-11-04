@@ -1,10 +1,10 @@
 @php
     $resolvedMedia = null;
     if (!empty($mediaId)) {
-        $resolvedMedia = \App\Models\Media::with('category')->find($mediaId);
+        $resolvedMedia = \MajidShafik\FilamentMediaLibrary\Models\Media::with('category')->find($mediaId);
     }
     if (!$resolvedMedia && !empty($path)) {
-        $resolvedMedia = \App\Models\Media::with('category')->where('file_path', $path)->first();
+        $resolvedMedia = \MajidShafik\FilamentMediaLibrary\Models\Media::with('category')->where('file_path', $path)->first();
     }
 
     $imageUrl = null;

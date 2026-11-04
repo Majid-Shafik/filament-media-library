@@ -408,7 +408,7 @@
                     </div>
                 </div>
 
-                @can('create', App\Models\MediaCategory::class)
+                @can('create', \MajidShafik\FilamentMediaLibrary\Models\MediaCategory::class)
                     <div>
                         <button 
                             type="button" 
@@ -537,7 +537,7 @@
                     @else
                         <h4 style="font-size: 16px; font-weight: 700; color: var(--fct-text-main); margin-bottom: 4px;">لا توجد تصنيفات وسائط حالياً</h4>
                         <p style="font-size: 13px; color: var(--fct-text-muted); margin-bottom: 16px;">ابدأ بتنظيم مكتبة الوسائط بإنشاء أول تصنيف رئيسي مثل: صور المشاريع، الفعاليات، أو التقارير السنوية.</p>
-                        @can('create', App\Models\MediaCategory::class)
+                        @can('create', \MajidShafik\FilamentMediaLibrary\Models\MediaCategory::class)
                             <button type="button" class="fct-btn-primary" wire:click="mountAction('createRootCategory')">
                                 <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -633,7 +633,7 @@
                                 {{-- 3. Row Actions --}}
                                 <div class="fct-actions-bar">
                                     {{-- Add Subcategory Action --}}
-                                    @can('create', App\Models\MediaCategory::class)
+                                    @can('create', \MajidShafik\FilamentMediaLibrary\Models\MediaCategory::class)
                                         <button 
                                             type="button" 
                                             class="fct-action-btn" 
@@ -658,7 +658,7 @@
                                     </a>
 
                                     {{-- Edit Category Action --}}
-                                    @can('update', App\Models\MediaCategory::class)
+                                    @can('update', \MajidShafik\FilamentMediaLibrary\Models\MediaCategory::class)
                                         <button 
                                             type="button" 
                                             class="fct-action-btn" 
@@ -672,7 +672,7 @@
                                     @endcan
 
                                     {{-- Delete Category Action --}}
-                                    @can('delete', App\Models\MediaCategory::class)
+                                    @can('delete', \MajidShafik\FilamentMediaLibrary\Models\MediaCategory::class)
                                         <button 
                                             type="button" 
                                             class="fct-action-btn delete" 

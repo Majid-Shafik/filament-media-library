@@ -2,9 +2,7 @@
 
 namespace MajidShafik\FilamentMediaLibrary\Services;
 
-use App\Models\Content;
 use MajidShafik\FilamentMediaLibrary\Models\PendingMediaDeletion;
-use App\Models\Section;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;

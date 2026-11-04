@@ -540,7 +540,7 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 8px;">
-                @if(auth()->user()?->can('create', \App\Models\Media::class))
+                @if(auth()->user()?->can('create', \MajidShafik\FilamentMediaLibrary\Models\Media::class))
                     <button 
                         type="button" 
                         class="fml-btn-primary" 
@@ -552,7 +552,7 @@
                         <span>رفع وسائط</span>
                     </button>
                 @endif
-                @if(auth()->user()?->can('create', \App\Models\MediaCategory::class))
+                @if(auth()->user()?->can('create', \MajidShafik\FilamentMediaLibrary\Models\MediaCategory::class))
                     <button 
                         type="button" 
                         class="fml-btn-pill" 
@@ -665,7 +665,7 @@
                 <span>النتائج · {{ $totalCount }}</span>
                 @if($selectedCount > 0)
                     <span style="color: var(--fml-primary);">({{ $selectedCount }} محدد)</span>
-                    @can('deleteAny', App\Models\Media::class)
+                    @can('deleteAny', \MajidShafik\FilamentMediaLibrary\Models\Media::class)
                         <button 
                             type="button" 
                             class="fml-select-all-btn" 
@@ -704,7 +704,7 @@
                         </div>
                         <h4 style="font-size: 15px; font-weight: 700; color: var(--fml-text-main); margin-bottom: 4px;">المجلد فارغ حالياً</h4>
                         <p style="font-size: 13px; color: var(--fml-text-muted); margin-bottom: 16px;">لا توجد أي وسائط أو مجلدات فرعية مطابقة في هذا المسار.</p>
-                        @if(auth()->user()?->can('create', \App\Models\Media::class))
+                        @if(auth()->user()?->can('create', \MajidShafik\FilamentMediaLibrary\Models\Media::class))
                             <button type="button" class="fml-btn-primary" wire:click="mountAction('uploadAction')">
                                 <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
@@ -920,8 +920,8 @@
 
                     {{-- Quick Action Buttons --}}
                     @php
-                        $canUpdateMedia = auth()->user()?->can('update', App\Models\Media::class) ?? false;
-                        $canDeleteMedia = auth()->user()?->can('delete', App\Models\Media::class) ?? false;
+                        $canUpdateMedia = auth()->user()?->can('update', \MajidShafik\FilamentMediaLibrary\Models\Media::class) ?? false;
+                        $canDeleteMedia = auth()->user()?->can('delete', \MajidShafik\FilamentMediaLibrary\Models\Media::class) ?? false;
                     @endphp
                     <div class="fml-action-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;">
                         <button 

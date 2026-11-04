@@ -29,7 +29,10 @@ class Media extends Model
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        /** @var class-string<Model> $userModel */
+        $userModel = config('auth.providers.users.model', 'App\\Models\\User');
+
+        return $this->belongsTo($userModel, 'created_by');
     }
 
     public function usages(): HasMany

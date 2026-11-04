@@ -20,7 +20,7 @@ class ListMediaCategories extends ListRecords
 {
     protected static string $resource = MediaCategoryResource::class;
 
-    protected string $view = 'filament.pages.media-categories-tree';
+    protected string $view = 'filament-media-library::pages.media-categories-tree';
 
     public string $viewMode = 'tree'; // 'tree' or 'table'
     public string $search = '';

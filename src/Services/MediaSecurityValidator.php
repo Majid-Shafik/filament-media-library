@@ -3,7 +3,6 @@
 namespace MajidShafik\FilamentMediaLibrary\Services;
 
 use MajidShafik\FilamentMediaLibrary\Exceptions\MediaSecurityException;
-use App\Models\Setting;
 use finfo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
@@ -331,22 +330,33 @@ class MediaSecurityValidator
         return $resource;
     }
 
+        /**
+     * Safely resolve application settings if available.
+     */
+    protected function getSettingsOptions(): ?array
+    {
+        return Cache::remember('global_settings', 600, function () {
+            if (class_exists('App\Models\Setting')) {
+                try {
+                    $settingClass = 'App\Models\Setting';
+                    return $settingClass::first()?->options;
+                } catch (\Throwable) {
+                    return null;
+                }
+            }
+            return null;
+        });
+    }
+
     /**
      * Get maximum allowed file size in bytes from Setting or default 5 MB.
      */
     protected function getMaxFileSizeBytes(): int
     {
-        $settings = Cache::remember('global_settings', 600, function () {
-            try {
-                return Setting::first()?->options;
-            } catch (\Throwable) {
-                return null;
-            }
-        });
-
-        $sizeMb = (int) ($settings['max_image_size'] ?? 5);
+        $settings = $this->getSettingsOptions();
+        $sizeMb = (int) ($settings['max_image_size'] ?? config('filament-media-library.max_file_size_mb', 5));
         if ($sizeMb <= 0 || $sizeMb > 50) {
-            $sizeMb = 5;
+            $sizeMb = (int) config('filament-media-library.max_file_size_mb', 5);
         }
 
         return $sizeMb * 1024 * 1024;
@@ -357,15 +367,8 @@ class MediaSecurityValidator
      */
     protected function getMaxImageWidth(): int
     {
-        $settings = Cache::remember('global_settings', 600, function () {
-            try {
-                return Setting::first()?->options;
-            } catch (\Throwable) {
-                return null;
-            }
-        });
-
-        return (int) ($settings['max_image_width'] ?? 3840);
+        $settings = $this->getSettingsOptions();
+        return (int) ($settings['max_image_width'] ?? config('filament-media-library.max_width', 3840));
     }
 
     /**
@@ -373,15 +376,8 @@ class MediaSecurityValidator
      */
     protected function getMaxImageHeight(): int
     {
-        $settings = Cache::remember('global_settings', 600, function () {
-            try {
-                return Setting::first()?->options;
-            } catch (\Throwable) {
-                return null;
-            }
-        });
-
-        return (int) ($settings['max_image_height'] ?? 2160);
+        $settings = $this->getSettingsOptions();
+        return (int) ($settings['max_image_height'] ?? config('filament-media-library.max_height', 2560));
     }
 
     /**

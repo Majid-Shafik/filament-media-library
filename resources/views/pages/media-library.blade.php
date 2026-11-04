@@ -23,7 +23,7 @@
 
                 {{-- Category Filter --}}
                 @php
-                    $categories = \Illuminate\Support\Facades\Schema::hasTable('media_categories') ? \App\Models\MediaCategory::all() : collect();
+                    $categories = \Illuminate\Support\Facades\Schema::hasTable('media_categories') ? \MajidShafik\FilamentMediaLibrary\Models\MediaCategory::all() : collect();
                 @endphp
                 <select 
                     wire:model.live="selectedCategoryId" 

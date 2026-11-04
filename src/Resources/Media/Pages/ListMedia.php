@@ -5,7 +5,6 @@ namespace MajidShafik\FilamentMediaLibrary\Resources\Media\Pages;
 use MajidShafik\FilamentMediaLibrary\Exceptions\MediaDuplicateDetectedException;
 use MajidShafik\FilamentMediaLibrary\Exceptions\MediaSecurityException;
 use MajidShafik\FilamentMediaLibrary\Resources\Media\MediaResource;
-use App\Models\Content;
 use MajidShafik\FilamentMediaLibrary\Models\Media;
 use MajidShafik\FilamentMediaLibrary\Models\MediaCategory;
 use MajidShafik\FilamentMediaLibrary\Rules\ValidImageFileRule;
@@ -30,7 +29,7 @@ class ListMedia extends ListRecords
 {
     protected static string $resource = MediaResource::class;
 
-    protected string $view = 'filament.pages.media-library-pro';
+    protected string $view = 'filament-media-library::pages.media-library-pro';
 
     public ?int $currentFolderId = null;
     public string $search = '';
@@ -135,7 +134,14 @@ class ListMedia extends ListRecords
             return [];
         }
 
-        return $user->favoriteMedia()->pluck('media.id')->all();
+        if (method_exists($user, 'favoriteMedia')) {
+            return $user->favoriteMedia()->pluck('media.id')->all();
+        }
+
+        return DB::table('media_favorites')
+            ->where('user_id', $user->getAuthIdentifier())
+            ->pluck('media_id')
+            ->all();
     }
 
     public function getBreadcrumbsList(): array
@@ -222,14 +228,20 @@ class ListMedia extends ListRecords
 
         if ($this->filterUsage === 'used') {
             $query->where(function ($q) {
-                $q->whereHas('usages')->orWhereIn('id', function ($sub) {
-                    $sub->select('featured_image_media_id')->from('contents')->whereNotNull('featured_image_media_id');
-                });
+                $q->whereHas('usages');
+                if (Schema::hasTable('contents')) {
+                    $q->orWhereIn('id', function ($sub) {
+                        $sub->select('featured_image_media_id')->from('contents')->whereNotNull('featured_image_media_id');
+                    });
+                }
             });
         } elseif ($this->filterUsage === 'unused') {
-            $query->whereDoesntHave('usages')->whereNotIn('id', function ($sub) {
-                $sub->select('featured_image_media_id')->from('contents')->whereNotNull('featured_image_media_id');
-            });
+            $query->whereDoesntHave('usages');
+            if (Schema::hasTable('contents')) {
+                $query->whereNotIn('id', function ($sub) {
+                    $sub->select('featured_image_media_id')->from('contents')->whereNotNull('featured_image_media_id');
+                });
+            }
         }
 
         return match ($this->sortBy) {
@@ -258,10 +270,12 @@ class ListMedia extends ListRecords
             return null;
         }
 
-        $contentRefs = DB::table('contents')
-            ->where('featured_image_media_id', $media->id)
-            ->select('id', 'title_ar', 'title_en', 'slug_ar', 'status')
-            ->get();
+        $contentRefs = Schema::hasTable('contents')
+            ? DB::table('contents')
+                ->where('featured_image_media_id', $media->id)
+                ->select('id', 'title_ar', 'title_en', 'slug_ar', 'status')
+                ->get()
+            : collect();
 
         $usagesList = [];
         foreach ($media->usages as $usage) {
@@ -545,7 +559,7 @@ class ListMedia extends ListRecords
 
                     foreach ($mediaItems as $media) {
                         $usagesCount = $media->usages()->count();
-                        $contentCount = DB::table('contents')->where('featured_image_media_id', $media->id)->count();
+                        $contentCount = Schema::hasTable('contents') ? DB::table('contents')->where('featured_image_media_id', $media->id)->count() : 0;
 
                         if ($usagesCount > 0 || $contentCount > 0) {
                             $skipped++;
@@ -664,7 +678,7 @@ class ListMedia extends ListRecords
         if (!$media) return;
 
         $usagesCount = $media->usages()->count();
-        $contentCount = DB::table('contents')->where('featured_image_media_id', $media->id)->count();
+        $contentCount = Schema::hasTable('contents') ? DB::table('contents')->where('featured_image_media_id', $media->id)->count() : 0;
 
         if ($usagesCount > 0 || $contentCount > 0) {
             Notification::make()

@@ -5,7 +5,6 @@ namespace MajidShafik\FilamentMediaLibrary\Components;
 use MajidShafik\FilamentMediaLibrary\Exceptions\MediaDuplicateDetectedException;
 use MajidShafik\FilamentMediaLibrary\Models\Media;
 use MajidShafik\FilamentMediaLibrary\Models\MediaCategory;
-use App\Models\Setting;
 use MajidShafik\FilamentMediaLibrary\Rules\ValidImageFileRule;
 use MajidShafik\FilamentMediaLibrary\Services\MediaLifecycleService;
 use Filament\Actions\Action;
@@ -59,8 +58,9 @@ class MediaImagePicker
             return true;
         }
 
-        $setting = Setting::first();
-        $allowed = $setting?->options['allow_users_upload_to_media_library'] ?? true;
+        $setting = static::getGeneralSetting();
+        $allowed = $setting?->options['allow_users_upload_to_media_library']
+            ?? config('filament-media-library.allow_users_upload_to_media_library', true);
         if (!$allowed) {
             return false;
         }
@@ -78,12 +78,29 @@ class MediaImagePicker
     }
 
     /**
+     * Safely resolve application settings if available.
+     */
+    protected static function getGeneralSetting(): mixed
+    {
+        $settingClass = 'App\\Models\\Setting';
+        if (class_exists($settingClass)) {
+            try {
+                return $settingClass::first();
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get maximum image size in MB from General Settings.
      */
     public static function getMaxImageSizeMB(): int
     {
-        $setting = Setting::first();
-        return (int) ($setting?->options['max_image_size'] ?? 5);
+        $setting = static::getGeneralSetting();
+        return (int) ($setting?->options['max_image_size'] ?? config('filament-media-library.max_file_size_mb', 5));
     }
 
     /**
@@ -92,8 +109,8 @@ class MediaImagePicker
      */
     public static function getPickerRows(): int
     {
-        $setting = Setting::first();
-        $rows = (int) ($setting?->options['media_picker_rows'] ?? 2);
+        $setting = static::getGeneralSetting();
+        $rows = (int) ($setting?->options['media_picker_rows'] ?? config('filament-media-library.picker_rows', 2));
         return $rows < 1 ? 2 : $rows;
     }
 
@@ -205,7 +222,7 @@ class MediaImagePicker
                 $path = $get($imagePathField);
                 $mediaId = $mediaIdField ? $get($mediaIdField) : null;
 
-                return view('filament.components.media-image-picker-preview', [
+                return view('filament-media-library::components.media-image-picker-preview', [
                     'path'    => $path,
                     'mediaId' => $mediaId,
                 ]);
@@ -250,7 +267,7 @@ class MediaImagePicker
                         }),
 
                     ViewField::make('duplicate_notice')
-                        ->view('filament.components.media-duplicate-alert')
+                        ->view('filament-media-library::components.media-duplicate-alert')
                         ->visible(fn (Get $get) => !empty(static::getDuplicateForAttachment($get('attachment')))),
 
                     Radio::make('duplicate_handling')
@@ -432,7 +449,7 @@ class MediaImagePicker
 
                     ViewField::make('selected_media_id')
                         ->label('اختر الصورة من المعرض أدناه')
-                        ->view('filament.components.media-grid-picker')
+                        ->view('filament-media-library::components.media-grid-picker')
                         ->required()
                         ->columnSpanFull()
                         ->viewData(function (Get $get) {

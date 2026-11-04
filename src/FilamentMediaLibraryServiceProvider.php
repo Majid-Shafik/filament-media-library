@@ -2,9 +2,14 @@
 
 namespace MajidShafik\FilamentMediaLibrary;
 
+use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use MajidShafik\FilamentMediaLibrary\Commands\BackfillMediaHashesCommand;
+use MajidShafik\FilamentMediaLibrary\Models\Media;
+use MajidShafik\FilamentMediaLibrary\Models\MediaCategory;
+use MajidShafik\FilamentMediaLibrary\Policies\MediaPolicy;
+use MajidShafik\FilamentMediaLibrary\Policies\MediaCategoryPolicy;
 
 class FilamentMediaLibraryServiceProvider extends PackageServiceProvider
 {
@@ -26,5 +31,11 @@ class FilamentMediaLibraryServiceProvider extends PackageServiceProvider
                 '2026_10_19_210000_create_media_favorites_table',
             ])
             ->hasCommand(BackfillMediaHashesCommand::class);
+    }
+
+    public function packageBooted(): void
+    {
+        Gate::policy(Media::class, MediaPolicy::class);
+        Gate::policy(MediaCategory::class, MediaCategoryPolicy::class);
     }
 }

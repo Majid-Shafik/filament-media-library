@@ -5,7 +5,6 @@ namespace MajidShafik\FilamentMediaLibrary\Services;
 use MajidShafik\FilamentMediaLibrary\Exceptions\MediaDuplicateDetectedException;
 use MajidShafik\FilamentMediaLibrary\Exceptions\MediaReferenceConflictException;
 use MajidShafik\FilamentMediaLibrary\Exceptions\MediaSecurityException;
-use App\Models\Content;
 use MajidShafik\FilamentMediaLibrary\Models\Media;
 use MajidShafik\FilamentMediaLibrary\Models\MediaUsage;
 use MajidShafik\FilamentMediaLibrary\Models\PendingMediaDeletion;
@@ -259,7 +258,7 @@ class MediaLifecycleService
     /**
      * Attach a media item to a content record with strict pessimistic locking.
      *
-     * @param Content $content
+     * @param \Illuminate\Database\Eloquent\Model $content
      * @param int $mediaId
      * @param string $fieldName
      * @param string $usagePath
@@ -267,14 +266,14 @@ class MediaLifecycleService
      * @throws MediaReferenceConflictException
      */
     public function attachToContent(
-        Content $content,
+        \Illuminate\Database\Eloquent\Model $content,
         int $mediaId,
         string $fieldName = 'featured_image',
         string $usagePath = 'featured_image'
     ): void {
         DB::transaction(function () use ($content, $mediaId, $fieldName, $usagePath) {
             // 1. Lock Content row first
-            $lockedContent = Content::where('id', $content->id)->lockForUpdate()->firstOrFail();
+            $lockedContent = get_class($content)::where('id', $content->id)->lockForUpdate()->firstOrFail();
 
             // 2. Lock Media row second (deterministic lock ordering)
             $lockedMedia = Media::where('id', $mediaId)->lockForUpdate()->firstOrFail();
@@ -286,7 +285,7 @@ class MediaLifecycleService
             // 3. Upsert media usage slot
             MediaUsage::updateOrCreate(
                 [
-                    'usable_type' => Content::class,
+                    'usable_type' => get_class($content),
                     'usable_id'   => $lockedContent->id,
                     'field_name'  => $fieldName,
                     'usage_path'  => $usagePath,
@@ -309,14 +308,14 @@ class MediaLifecycleService
      * Detach a media item from a content record.
      */
     public function detachFromContent(
-        Content $content,
+        \Illuminate\Database\Eloquent\Model $content,
         string $fieldName = 'featured_image',
         string $usagePath = 'featured_image'
     ): void {
         DB::transaction(function () use ($content, $fieldName, $usagePath) {
-            $lockedContent = Content::where('id', $content->id)->lockForUpdate()->firstOrFail();
+            $lockedContent = get_class($content)::where('id', $content->id)->lockForUpdate()->firstOrFail();
 
-            MediaUsage::where('usable_type', Content::class)
+            MediaUsage::where('usable_type', get_class($content))
                 ->where('usable_id', $lockedContent->id)
                 ->where('field_name', $fieldName)
                 ->where('usage_path', $usagePath)
