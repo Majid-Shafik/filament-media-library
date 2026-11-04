@@ -50,10 +50,15 @@ class MediaLifecycleService
         // 2. Compute cryptographic SHA-256 fingerprint from sanitized bytes
         $sha256Hash = $this->calculateFileHash($cleanPath);
 
-        // 3. Resolve user for permission check
+        // 3. Resolve user for permission check safely avoiding non-Eloquent LDAP providers
         $userId = $attributes['created_by'] ?? Auth::id();
-        $userModel = config('auth.providers.users.model', 'App\\Models\\User');
-        $user = ($userId && class_exists($userModel)) ? $userModel::find($userId) : Auth::user();
+        $user = null;
+        if (Auth::check() && (int) Auth::id() === (int) $userId) {
+            $user = Auth::user();
+        } elseif ($userId) {
+            $userModel = self::getEloquentUserModel();
+            $user = class_exists($userModel) ? $userModel::find($userId) : null;
+        }
 
         // 4. Concurrency lock to prevent simultaneous duplicate uploads
         $lock = null;
@@ -576,5 +581,35 @@ class MediaLifecycleService
                     ]);
             }
         });
+    }
+
+    /**
+     * Resolve the authenticatable Eloquent User model class.
+     * Safely ignores non-Eloquent LDAP providers (e.g., LdapRecord ActiveDirectory User).
+     *
+     * @return class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    public static function getEloquentUserModel(): string
+    {
+        // 1. Check LdapRecord database sync model if configured
+        $dbModel = config('auth.providers.users.database.model');
+        if ($dbModel && class_exists($dbModel) && is_subclass_of($dbModel, Model::class)) {
+            return $dbModel;
+        }
+
+        // 2. Standard Eloquent user provider model
+        $providerModel = config('auth.providers.users.model');
+        if ($providerModel && class_exists($providerModel) && is_subclass_of($providerModel, Model::class)) {
+            return $providerModel;
+        }
+
+        // 3. Alternative local provider model
+        $localModel = config('auth.providers.local_users.model');
+        if ($localModel && class_exists($localModel) && is_subclass_of($localModel, Model::class)) {
+            return $localModel;
+        }
+
+        // 4. Default fallback
+        return 'App\\Models\\User';
     }
 }

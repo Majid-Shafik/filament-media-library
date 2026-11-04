@@ -30,7 +30,7 @@ class Media extends Model
     public function createdBy(): BelongsTo
     {
         /** @var class-string<Model> $userModel */
-        $userModel = config('auth.providers.users.model', 'App\\Models\\User');
+        $userModel = \MajidShafik\FilamentMediaLibrary\Services\MediaLifecycleService::getEloquentUserModel();
 
         return $this->belongsTo($userModel, 'created_by');
     }
