@@ -45,6 +45,17 @@ class EditMediaCategory extends EditRecord
             $data['slug'] = Str::slug($data['name']);
         }
 
+        if (empty($data['slug'])) {
+            $data['slug'] = 'cat-' . Str::random(6);
+        }
+
+        if (static::getModel()::where('slug', $data['slug'])->where('id', '!=', $record->id)->exists()) {
+            throw ValidationException::withMessages([
+                'slug' => 'هذا الاسم اللطيف (Slug) مستخدم بالفعل، يرجى اختيار اسم أو رابط آخر.',
+                'name' => 'يوجد تصنيف بهذا الاسم أو الاسم اللطيف مسبقاً، يرجى تغيير الاسم.',
+            ]);
+        }
+
         $newParentId = !empty($data['parent_id']) ? (int) $data['parent_id'] : null;
         unset($data['parent_id']);
 

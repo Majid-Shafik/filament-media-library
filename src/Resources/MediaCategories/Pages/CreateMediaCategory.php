@@ -20,6 +20,17 @@ class CreateMediaCategory extends CreateRecord
             $data['slug'] = Str::slug($data['name']);
         }
 
+        if (empty($data['slug'])) {
+            $data['slug'] = 'cat-' . Str::random(6);
+        }
+
+        if (static::getModel()::where('slug', $data['slug'])->exists()) {
+            throw ValidationException::withMessages([
+                'slug' => 'هذا الاسم اللطيف (Slug) مستخدم بالفعل، يرجى اختيار اسم أو رابط آخر.',
+                'name' => 'يوجد تصنيف بهذا الاسم أو الاسم اللطيف مسبقاً، يرجى تغيير الاسم.',
+            ]);
+        }
+
         return $data;
     }
 

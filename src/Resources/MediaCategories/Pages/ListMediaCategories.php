@@ -95,16 +95,40 @@ class ListMediaCategories extends ListRecords
                         ->label('اسم التصنيف')
                         ->required()
                         ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                            if (empty($get('slug')) && !empty($state)) {
+                                $set('slug', Str::slug($state));
+                            }
+                        })
                         ->placeholder('مثال: صور المشاريع، فعاليات...'),
 
                     TextInput::make('slug')
                         ->label('الاسم اللطيف (Slug)')
                         ->maxLength(255)
+                        ->unique(MediaCategory::class, 'slug')
+                        ->validationMessages([
+                            'unique' => 'الاسم اللطيف (Slug) مستخدم بالفعل، يرجى اختيار اسم أو رابط آخر.',
+                        ])
                         ->helperText('يُترك فارغاً للتوليد التلقائي.'),
                 ])
-                ->action(function (array $data) {
+                ->action(function (array $data, Action $action) {
                     if (empty($data['slug'])) {
                         $data['slug'] = Str::slug($data['name']);
+                    }
+
+                    if (empty($data['slug'])) {
+                        $data['slug'] = 'cat-' . Str::random(6);
+                    }
+
+                    if (MediaCategory::where('slug', $data['slug'])->exists()) {
+                        Notification::make()
+                            ->title('تنبيه: التصنيف موجود مسبقاً')
+                            ->body("يوجد تصنيف آخر يحمل نفس الاسم اللطيف ({$data['slug']}). يرجى تغيير الاسم أو كتابة اسم لطيف مختلف.")
+                            ->danger()
+                            ->send();
+
+                        $action->halt();
                     }
 
                     $cat = MediaCategory::create([
@@ -140,16 +164,40 @@ class ListMediaCategories extends ListRecords
                         ->label('اسم التصنيف الفرعي')
                         ->required()
                         ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                            if (empty($get('slug')) && !empty($state)) {
+                                $set('slug', Str::slug($state));
+                            }
+                        })
                         ->placeholder('اسم الفرع...'),
 
                     TextInput::make('slug')
                         ->label('الاسم اللطيف (Slug)')
                         ->maxLength(255)
+                        ->unique(MediaCategory::class, 'slug')
+                        ->validationMessages([
+                            'unique' => 'الاسم اللطيف (Slug) مستخدم بالفعل، يرجى اختيار اسم أو رابط آخر.',
+                        ])
                         ->helperText('يُترك فارغاً للتوليد التلقائي.'),
                 ])
-                ->action(function (array $data) {
+                ->action(function (array $data, Action $action) {
                     if (empty($data['slug'])) {
                         $data['slug'] = Str::slug($data['name']);
+                    }
+
+                    if (empty($data['slug'])) {
+                        $data['slug'] = 'cat-' . Str::random(6);
+                    }
+
+                    if (MediaCategory::where('slug', $data['slug'])->exists()) {
+                        Notification::make()
+                            ->title('تنبيه: التصنيف موجود مسبقاً')
+                            ->body("يوجد تصنيف آخر يحمل نفس الاسم اللطيف ({$data['slug']}). يرجى تغيير الاسم أو كتابة اسم لطيف مختلف.")
+                            ->danger()
+                            ->send();
+
+                        $action->halt();
                     }
 
                     $cat = MediaCategory::create([
@@ -190,7 +238,11 @@ class ListMediaCategories extends ListRecords
 
                     TextInput::make('slug')
                         ->label('الاسم اللطيف (Slug)')
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->unique(MediaCategory::class, 'slug', ignoreRecord: true)
+                        ->validationMessages([
+                            'unique' => 'الاسم اللطيف (Slug) مستخدم بالفعل، يرجى اختيار اسم أو رابط آخر.',
+                        ]),
 
                     Select::make('parent_id')
                         ->label('التصنيف الأب')
@@ -216,6 +268,24 @@ class ListMediaCategories extends ListRecords
 
                     if (empty($data['slug'])) {
                         $data['slug'] = Str::slug($data['name']);
+                    }
+
+                    if (empty($data['slug'])) {
+                        $data['slug'] = 'cat-' . Str::random(6);
+                    }
+
+                    $exists = MediaCategory::where('slug', $data['slug'])
+                        ->where('id', '!=', $cat->id)
+                        ->exists();
+
+                    if ($exists) {
+                        Notification::make()
+                            ->title('تنبيه: التصنيف موجود مسبقاً')
+                            ->body("يوجد تصنيف آخر يحمل نفس الاسم اللطيف ({$data['slug']}). يرجى تغيير الاسم أو كتابة اسم لطيف مختلف.")
+                            ->danger()
+                            ->send();
+
+                        $action->halt();
                     }
 
                     $cat->name = $data['name'];

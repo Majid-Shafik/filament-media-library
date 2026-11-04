@@ -26,11 +26,21 @@ class MediaCategoryForm
                                     ->label('اسم التصنيف')
                                     ->required()
                                     ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (string $operation, $state, callable $set, callable $get) {
+                                        if (empty($get('slug')) && !empty($state)) {
+                                            $set('slug', \Illuminate\Support\Str::slug($state));
+                                        }
+                                    })
                                     ->placeholder('أدخل اسم التصنيف...'),
 
                                 TextInput::make('slug')
                                     ->label('الاسم اللطيف (Slug)')
                                     ->maxLength(255)
+                                    ->unique(MediaCategory::class, 'slug', ignoreRecord: true)
+                                    ->validationMessages([
+                                        'unique' => 'الاسم اللطيف (Slug) مستخدم بالفعل، يرجى اختيار اسم أو رابط آخر.',
+                                    ])
                                     ->helperText('يُترك فارغاً للتوليد التلقائي من الاسم.'),
 
                                 Select::make('parent_id')
