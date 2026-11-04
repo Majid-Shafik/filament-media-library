@@ -375,7 +375,7 @@
                         {{-- Action Buttons --}}
                         <div class="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center gap-2">
                             <a 
-                                href="{{ \App\Filament\Resources\Media\MediaResource::getUrl('edit', ['record' => $activePreview['id']]) }}" 
+                                href="{{ \MajidShafik\FilamentMediaLibrary\Resources\Media\MediaResource::getUrl('edit', ['record' => $activePreview['id']]) }}" 
                                 class="flex-1 inline-flex justify-center items-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition"
                             >
                                 <x-filament::icon icon="heroicon-o-pencil" class="w-3.5 h-3.5" />

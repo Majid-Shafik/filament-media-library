@@ -648,7 +648,7 @@
 
                                     {{-- View Media Link --}}
                                     <a 
-                                        href="{{ \App\Filament\Resources\Media\MediaResource::getUrl('index', ['folder' => $node['id']]) }}" 
+                                        href="{{ \MajidShafik\FilamentMediaLibrary\Resources\Media\MediaResource::getUrl('index', ['folder' => $node['id']]) }}" 
                                         class="fct-action-btn" 
                                         title="استعراض وسائط هذا المجلد"
                                     >

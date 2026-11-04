@@ -1,6 +1,6 @@
 @php
     $attachment = $get('attachment');
-    $duplicate = \App\Filament\Components\MediaImagePicker::getDuplicateForAttachment($attachment);
+    $duplicate = \MajidShafik\FilamentMediaLibrary\Components\MediaImagePicker::getDuplicateForAttachment($attachment);
 @endphp
 
 @if($duplicate)

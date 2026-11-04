@@ -8,7 +8,7 @@ use MajidShafik\FilamentMediaLibrary\Exceptions\MediaSecurityException;
 use MajidShafik\FilamentMediaLibrary\Models\Media;
 use MajidShafik\FilamentMediaLibrary\Models\MediaUsage;
 use MajidShafik\FilamentMediaLibrary\Models\PendingMediaDeletion;
-use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +52,8 @@ class MediaLifecycleService
 
         // 3. Resolve user for permission check
         $userId = $attributes['created_by'] ?? Auth::id();
-        $user = $userId ? User::find($userId) : Auth::user();
+        $userModel = config('auth.providers.users.model', 'App\\Models\\User');
+        $user = ($userId && class_exists($userModel)) ? $userModel::find($userId) : Auth::user();
 
         // 4. Concurrency lock to prevent simultaneous duplicate uploads
         $lock = null;
@@ -152,11 +153,11 @@ class MediaLifecycleService
      * Respects user view permissions to avoid disclosing unauthorized media.
      *
      * @param string $hash
-     * @param User|null $user
+     * @param Authenticatable|null $user
      * @param int|null $fileSize
      * @return Media|null
      */
-    public function findDuplicateByHash(string $hash, ?User $user = null, ?int $fileSize = null): ?Media
+    public function findDuplicateByHash(string $hash, ?Authenticatable $user = null, ?int $fileSize = null): ?Media
     {
         $hash = strtolower(trim($hash));
         if (empty($hash)) {
@@ -214,11 +215,11 @@ class MediaLifecycleService
      * Check if an uploaded file matches an existing media record.
      *
      * @param UploadedFile $file
-     * @param User|null $user
+     * @param Authenticatable|null $user
      * @return Media|null
      * @throws MediaSecurityException
      */
-    public function findDuplicate(UploadedFile $file, ?User $user = null): ?Media
+    public function findDuplicate(UploadedFile $file, ?Authenticatable $user = null): ?Media
     {
         $sanitized = $this->validator->validateAndSanitize($file);
         $cleanPath = $sanitized['clean_path'];
