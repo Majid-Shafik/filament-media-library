@@ -604,12 +604,13 @@ class ListMedia extends ListRecords
             Action::make('editMediaAction')
                 ->label('تعديل البيانات')
                 ->icon('heroicon-o-pencil-square')
-                ->visible(fn () => Auth::user()?->can('update', Media::class) ?? false)
+                ->color('warning')
+                ->visible(fn () => (Auth::user()?->can('update', Media::class) ?? false) && (filled($this->activeMediaId) || count($this->selectedIds) === 1))
                 ->authorize(fn () => Auth::user()?->can('update', Media::class) ?? false)
                 ->modalHeading('تعديل بيانات الوسيط')
                 ->modalSubmitActionLabel('حفظ التعديلات')
                 ->fillForm(function (array $arguments) {
-                    $mediaId = $arguments['mediaId'] ?? $this->activeMediaId ?? null;
+                    $mediaId = $arguments['mediaId'] ?? $this->activeMediaId ?? (count($this->selectedIds) === 1 ? $this->selectedIds[0] : null);
                     if (!$mediaId) {
                         return [];
                     }
@@ -647,10 +648,11 @@ class ListMedia extends ListRecords
                         ->label('الوصف التوضيحي')
                         ->rows(2),
                 ])
-                ->action(function (array $data, array $arguments) {
-                    $mediaId = $arguments['mediaId'] ?? $this->activeMediaId ?? null;
+                ->action(function (array $data, array $arguments, Action $action) {
+                    $mediaId = $arguments['mediaId'] ?? $this->activeMediaId ?? (count($this->selectedIds) === 1 ? $this->selectedIds[0] : null);
                     if (!$mediaId) {
-                        Notification::make()->title('لم يتم العثور على الوسيط')->danger()->send();
+                        Notification::make()->title('يرجى تحديد أو اختيار وسيط أولاً لتعديل بياناته')->warning()->send();
+                        $action->halt();
                         return;
                     }
 
